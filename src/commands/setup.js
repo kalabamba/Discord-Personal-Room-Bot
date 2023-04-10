@@ -12,38 +12,7 @@ module.exports = {
                     if(!interaction.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory)) {
                         let cat = new Promise((resolve, reject)=> {resolve(interaction.guild.channels.create({name:"Personal Rooms", type: ChannelType.GuildCategory, position: interaction.guild.channels.size, reason: "Setup by " + interaction.user.tag}))})
                         await cat
-                        interaction.guild.channels.create({
-                            name:"Join to Create", 
-                            type: ChannelType.GuildVoice, 
-                            parent: interaction.guild.channels.cache.find(channel => channel.name === "Personal Rooms"), 
-                            reason: "Setup by " + interaction.user.tag, 
-                            permissionOverwrites: [
-                                {
-                                    id: interaction.guild.roles.everyone.id, 
-                                    deny: [PermissionFlagsBits.Speak, PermissionFlagsBits.SendMessages],
-                                },
-                            ],
-                            userLimit: 1,
-                        })
-                        interaction.guild.channels.create({
-                            name:"Room Commands", 
-                            type: ChannelType.GuildText, 
-                            parent: interaction.guild.channels.cache.find(channel => channel.name === "Personal Rooms"), 
-                            reason: "Setup by " + interaction.user.tag, 
-                            permissionOverwrites: [
-                                {
-                                    id: interaction.guild.roles.everyone.id, 
-                                    allow: [PermissionFlagsBits.SendMessages],
-                                },
-                            ],
-                        })
-
-                        const embed = new EmbedBuilder()
-                        .setDescription("Setup Complete!")
-                        .setColor("Aqua")
-                        return interaction.followUp({embeds: [embed]})
-                    }else {
-                        if(!interaction.guild.channels.cache.find(channel => channel.name === "Join to Create" && channel.type === ChannelType.GuildVoice && channel.parentId === interaction.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id)){
+                        if(!interaction.guild.channels.cache.find(channel => channel.name === "Join to Create" && channel.type === ChannelType.GuildVoice)) {
                             interaction.guild.channels.create({
                                 name:"Join to Create", 
                                 type: ChannelType.GuildVoice, 
@@ -55,18 +24,32 @@ module.exports = {
                                         deny: [PermissionFlagsBits.Speak, PermissionFlagsBits.SendMessages],
                                     },
                                 ],
+                                userLimit: 1,
                             })
-                            const embed = new EmbedBuilder()
-                            .setDescription("Setup Complete!")
-                            .setColor("Aqua")
-                            return interaction.followUp({embeds: [embed]})
-                        }else {
+                        }
+                        if(!interaction.guild.channels.cache.find(channel => channel.name === "room-commands" && channel.type === ChannelType.GuildText)){
+                            interaction.guild.channels.create({
+                                name:"room-commands", 
+                                type: ChannelType.GuildText, 
+                                parent: interaction.guild.channels.cache.find(channel => channel.name === "Personal Rooms"), 
+                                reason: "Setup by " + interaction.user.tag, 
+                                permissionOverwrites: [
+                                    {
+                                        id: interaction.guild.roles.everyone.id, 
+                                        allow: [PermissionFlagsBits.SendMessages],
+                                    },
+                                ],
+                            })
+                        }
+                        const embed = new EmbedBuilder()
+                        .setDescription("Setup Complete!")
+                        .setColor("Aqua")
+                        return interaction.followUp({embeds: [embed]})
+                    }else {
                             const embed = new EmbedBuilder()
                             .setDescription("Setup Already Completed!")
                             .setColor("Aqua")
                             return interaction.followUp({embeds: [embed]})
-                        }
-                        
                     }  
                 }
                 catch(err) {console.log(err.message)}
