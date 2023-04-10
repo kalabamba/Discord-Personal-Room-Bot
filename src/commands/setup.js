@@ -50,7 +50,7 @@ module.exports = {
                             const embed = new EmbedBuilder()
                             .setDescription("Setup Already Completed!")
                             .setColor("Aqua")
-                            return interaction.followUp({embeds: [embed]})
+                            return interaction.followUp({embeds: [embed], ephemeral: true})
                         }
                         
                     }  
