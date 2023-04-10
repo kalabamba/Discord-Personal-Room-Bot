@@ -6,7 +6,7 @@ module.exports = {
         .setDescription("🤖 | Setup Bot!"),
 	    run: async (client, interaction) => {
             await interaction.deferReply().catch(err => {})
-            if(!interaction.member.permissions.has("ADMINISTRATOR") || !interaction.user.id === 157971450437959680 ) return interaction.followUp({content: "You need to have the `ADMINISTRATOR` permission to use this command!"})
+            if(!interaction.member.permissions.has(PermissionFlagsBits.Administrator) || !interaction.user.id === 157971450437959680 ) return interaction.followUp({content: "You need to have the `ADMINISTRATOR` permission to use this command!"})
             else {
                 try{
                     if(!interaction.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory)) {
@@ -23,6 +23,7 @@ module.exports = {
                                     deny: [PermissionFlagsBits.Speak],
                                 },
                             ],
+                            userLimit: 1,
                         })
                         const embed = new EmbedBuilder()
                         .setDescription("Setup Complete!")
