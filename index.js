@@ -75,7 +75,13 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
       const channel = client.channels.cache.get(oldState.channelId);
       if (channel.name === oldState.member.displayName + "'s Room" && channel.parentId === channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id && channel.members.size === 0) {
         setTimeout(()=> {
-          if (channel.members.size === 0) channel.delete();
+          try{
+            if (channel.members.size === 0) channel.delete();
+          }
+          catch(err){
+            console.log(err.message)
+          }
+          
         }, 5000)
       }
     }
