@@ -25,6 +25,19 @@ module.exports = {
                             ],
                             userLimit: 1,
                         })
+                        interaction.guild.channels.create({
+                            name:"Room Commands", 
+                            type: ChannelType.GuildText, 
+                            parent: interaction.guild.channels.cache.find(channel => channel.name === "Personal Rooms"), 
+                            reason: "Setup by " + interaction.user.tag, 
+                            permissionOverwrites: [
+                                {
+                                    id: interaction.guild.roles.everyone.id, 
+                                    allow: [PermissionFlagsBits.SendMessages],
+                                },
+                            ],
+                        })
+
                         const embed = new EmbedBuilder()
                         .setDescription("Setup Complete!")
                         .setColor("Aqua")
