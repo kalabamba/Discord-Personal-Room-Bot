@@ -45,13 +45,12 @@ readdirSync('./src/events').forEach(async file => {
 	}
 })
 
-
 client.on('voiceStateUpdate', async (oldState, newState) => {
   try {
     if (oldState.channelId === newState.channelId) return;
     if (oldState.channelId === null) {
       const channel = client.channels.cache.get(newState.channelId);
-      if (channel.name === 'Join to Create' && channel.parentId === channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id && channel.members.size === 1 && channel.guild.channels.cache.find(channel => channel.name === newState.member.displayName + "'s Room" && channel.type === ChannelType.GuildVoice) === undefined) {
+      if (channel.name === 'Join to Create' && channel.parentId === channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id && channel.guild.channels.cache.find(channel => channel.name === newState.member.displayName + "'s Room" && channel.type === ChannelType.GuildVoice) === undefined) {
         const category = channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory);
         const name = newState.member.displayName + "'s Room";
         const newChannel = await category.guild.channels.create({
@@ -61,7 +60,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
           permissionOverwrites: [
             {
               id: newState.member.id,
-              allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak, PermissionFlagsBits.ManageChannels, PermissionFlagsBits.Stream],
+              allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak, PermissionFlagsBits.Stream],
             },
             {
               id: category.guild.roles.everyone,
@@ -73,7 +72,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
       }
     } else if (newState.channelId === null) {
       const channel = client.channels.cache.get(oldState.channelId);
-      if (channel.name === oldState.member.displayName + "'s Room" && channel.parentId === channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id && channel.members.size === 0) {
+      if (channel.parentId === channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id && channel.members.size === 0) {
         setTimeout(()=> {
           try{
             if (channel.members.size === 0) channel.delete();
@@ -91,5 +90,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
   }
 
 });
+
+
 
 client.login(token)

@@ -20,7 +20,7 @@ module.exports = {
                             permissionOverwrites: [
                                 {
                                     id: interaction.guild.roles.everyone.id, 
-                                    deny: [PermissionFlagsBits.Speak],
+                                    deny: [PermissionFlagsBits.Speak, PermissionFlagsBits.SendMessages],
                                 },
                             ],
                             userLimit: 1,
