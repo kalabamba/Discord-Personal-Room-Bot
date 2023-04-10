@@ -63,6 +63,10 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
               allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak, PermissionFlagsBits.Stream],
             },
             {
+              id: client.user.id,
+              allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ManageChannels],
+            },
+            {
               id: category.guild.roles.everyone,
               deny: [PermissionFlagsBits.Connect],
             },
@@ -72,7 +76,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
       }
     } else if (newState.channelId === null) {
       const channel = client.channels.cache.get(oldState.channelId);
-      if (channel.parentId === channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id && channel.members.size === 0) {
+      if (channel.name !== 'Join to Create' && channel.parentId === channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id && channel.members.size === 0) {
         setTimeout(()=> {
           try{
             if (channel.members.size === 0) channel.delete();
