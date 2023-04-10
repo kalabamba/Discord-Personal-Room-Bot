@@ -12,7 +12,24 @@ module.exports = {
                     if (!interaction.guild.channels.cache.find(channel => channel.name === "room-commands" && channel.type === ChannelType.GuildText) || !interaction.guild.channels.cache.find(channel => channel.name === "Join to Create" && channel.type === ChannelType.GuildVoice) || !interaction.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory)) {
                         
                         if(!interaction.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory)) {
-                            let cat = new Promise((resolve, reject)=> {resolve(interaction.guild.channels.create({name:"Personal Rooms", type: ChannelType.GuildCategory, position: interaction.guild.channels.size, reason: "Setup by " + interaction.user.tag}))})
+                            let cat = new Promise((resolve, reject)=> {resolve(interaction.guild.channels.create({
+                                name:"Personal Rooms", 
+                                type: ChannelType.GuildCategory, 
+                                position: interaction.guild.channels.size, 
+                                reason: "Setup by " + interaction.user.tag,
+                                permissionOverwrites: [
+                                    {
+                                        id: interaction.guild.roles.everyone.id,
+                                        allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak, PermissionFlagsBits.Stream],
+                                    },
+                                    {
+                                        id: client.user.id,
+                                        allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.ManageChannels],
+                                    }
+                                ],
+                            }))
+                        }
+                        )
                             await cat
                         }
 
