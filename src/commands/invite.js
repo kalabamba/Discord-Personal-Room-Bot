@@ -6,9 +6,15 @@ module.exports = {
     .setDescription("🤖 | invite link!"),
     run: async (client, interaction) => {
       await interaction.deferReply().catch(err => {})
-    const embed = new EmbedBuilder()
-    .setDescription("https://discord.com/api/oauth2/authorize?client_id=1094820165671211058&permissions=285215760&scope=bot")
-    .setColor("Aqua")
-    return interaction.followUp({embeds: [embed]})
+      if (process.env.oauthv2link === undefined) {
+        interaction.editReply("Missing `oauthv2link` in .env! Please contact with <@157971450437959680>")
+      }else {
+        const embed = new EmbedBuilder()
+        .setTitle(`${client.user.username}'s invite link:`)
+        .setThumbnail(client.user.displayAvatarURL())
+        .setDescription(`My invite link is: ${process.env.oauthv2link}`)
+        .setColor("Aqua")
+        return interaction.editReply({embeds: [embed]})
+    }
  }
 }
