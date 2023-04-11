@@ -21,6 +21,7 @@ module.exports = {
         
 	    run: async (client, interaction) => {
             await interaction.deferReply({ ephemeral: true }).catch(err => {})
+            // SETUP COMMAND
             if(interaction.options.getSubcommand() === "setup") {
                 if(!interaction.member.permissions.has(PermissionFlagsBits.Administrator) || !interaction.user.id === 157971450437959680 ) return interaction.followUp({content: "You need to have the `ADMINISTRATOR` permission to use this command!"})
                 else {
@@ -53,7 +54,7 @@ module.exports = {
                                 })
                             }
                             if(!interaction.guild.channels.cache.find(channel => channel.name === "room-commands" && channel.type === ChannelType.GuildText)){
-                                interaction.guild.channels.create({
+                                await interaction.guild.channels.create({
                                     name:"room-commands", 
                                     type: ChannelType.GuildText, 
                                     parent: interaction.guild.channels.cache.find(channel => channel.name === "Personal Rooms"), 
@@ -65,6 +66,17 @@ module.exports = {
                                         },
                                     ],
                                 })
+                                let cmdchannel = interaction.guild.channels.cache.find(channel => channel.name === "room-commands" && channel.type === ChannelType.GuildText)
+                                const vchannelId = interaction.guild.channels.cache.find(channel => channel.name === "Join to Create" && channel.type === ChannelType.GuildVoice).id
+                                const embed = new EmbedBuilder()
+                                .setTitle("Personal Room Manager")
+                                .setDescription("This is the personal room manager, you can use this to create your own personal room, and add users to your personal room!")
+                                .setColor("Aqua")
+                                .addFields({name: "Usage", value: `🔉 <#${vchannelId}> - Join for Create your personal room`})
+                                .addFields({name: "Commands", value: "`/personal-rooms setup` - Setup the personal room manager\n`/personal-rooms add-user @user` - Add a user to your personal room"})
+                                .setTimestamp(new Date())
+                                .setFooter({ text: "Setup by " + interaction.user.tag, iconURL: interaction.user.avatarURL() })
+                                cmdchannel.send({embeds: [embed]})
                             }
                             const embed = new EmbedBuilder()
                             .setDescription("Setup Complete!")
@@ -77,9 +89,14 @@ module.exports = {
                             return interaction.editReply({embeds: [embed]})
                         }
                     }
-                    catch(err) {console.log(err.message)}
+                    catch(err) {
+                        console.log(err);
+                        interaction.editReply({content: 'Bir hata meydana geldi.', ephemeral: true })
+                    }
                 }
-            }else if (interaction.options.getUser('user')){
+            }
+            // ADD USER COMMAND
+            else if (interaction.options.getUser('user')){
                 try{
                     const user = interaction.options.getUser('user')
                     if(!interaction.member.voice.channel) return interaction.editReply({content: "You need to be in a voice channel to use this command!", ephemeral: true})
