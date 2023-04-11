@@ -1,4 +1,10 @@
+require('dotenv').config()
 const { Client, Collection, GatewayIntentBits, PermissionFlagsBits, ChannelType } = require("discord.js")
+const { readdirSync } = require("fs")
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v10');
+let token = process.env.TOKEN
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -6,12 +12,6 @@ const client = new Client({
     GatewayIntentBits.GuildVoiceStates
   ]
 })
-require('dotenv').config()
-const { readdirSync } = require("fs")
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v10');
-let token = process.env.TOKEN
-
 client.commands = new Collection()
 
 const rest = new REST({ version: '10' }).setToken(token);
@@ -25,15 +25,15 @@ readdirSync('./src/commands').forEach(async file => {
 
 
 client.on("ready", async () => {
-        try {
-            await rest.put(
-                Routes.applicationCommands(client.user.id),
-                { body: commands },
-            );
-        } catch (error) {
-            console.error(error);
-        }
-    console.log(`Bot logged in as ${client.user.tag}!`);
+  try {
+    await rest.put(
+      Routes.applicationCommands(client.user.id),
+      { body: commands },
+    );
+  } catch (error) {
+    console.error(error);
+  }
+  console.log(`Bot logged in as ${client.user.tag}!`);
 })
 
 readdirSync('./src/events').forEach(async file => {
@@ -48,9 +48,9 @@ readdirSync('./src/events').forEach(async file => {
 client.on('voiceStateUpdate', async (oldState, newState) => {
   try {
     if (oldState.channelId === newState.channelId) return;
-    if (oldState.channelId === null) {
+    if (oldState.channelId !== newState.channelId && newState.channelId !== null && client.channels.cache.get(newState.channelId).name === 'Join to Create' && client.channels.cache.get(newState.channelId).parentId === client.channels.cache.get(newState.channelId).guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id ){
       const channel = client.channels.cache.get(newState.channelId);
-      if (channel.name === 'Join to Create' && channel.parentId === channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id && channel.guild.channels.cache.find(channel => channel.name === newState.member.displayName + "'s Room" && channel.type === ChannelType.GuildVoice) === undefined) {
+      if (channel.guild.channels.cache.find(channel => channel.name === newState.member.displayName + "'s Room" && channel.type === ChannelType.GuildVoice) === undefined){
         const category = channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory);
         const name = newState.member.displayName + "'s Room";
         const newChannel = await category.guild.channels.create({
@@ -73,8 +73,11 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
           ],
         });
         newState.setChannel(newChannel);
+      }else{
+        oldChannel = channel.guild.channels.cache.find(channel => channel.name === newState.member.displayName + "'s Room" && channel.type === ChannelType.GuildVoice);
+        newState.setChannel(oldChannel);
       }
-    } else if (newState.channelId === null) {
+    }else if (newState.channelId === null) {
       const channel = client.channels.cache.get(oldState.channelId);
       if (channel.name !== 'Join to Create' && channel.parentId === channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id && channel.members.size === 0) {
         setTimeout(()=> {
@@ -92,9 +95,6 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
   catch(err){
     console.log(err)
   }
-
 });
-
-
 
 client.login(token)
