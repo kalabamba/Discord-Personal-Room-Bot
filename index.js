@@ -79,10 +79,14 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
       }
     }else if (newState.channelId === null) {
       const channel = client.channels.cache.get(oldState.channelId);
-      if (channel.name !== 'Join to Create' && channel.parentId === channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id && channel.members.size === 0) {
+      if (channel.name !== 'Join to Create' && channel.parentId === channel.guild.channels.cache.find(channel => channel.name === "Personal Rooms" && channel.type === ChannelType.GuildCategory).id) {
         setTimeout(()=> {
           try{
             if (channel.members.size === 0) channel.delete();
+            if (channel.guild.channels.cache.find(channel => channel.name === oldState.member.displayName + "'s Room" && channel.type === ChannelType.GuildVoice) !== undefined) {
+              const personalChannel = channel.guild.channels.cache.find(channel => channel.name === oldState.member.displayName + "'s Room" && channel.type === ChannelType.GuildVoice);
+              if (personalChannel.members.size === 0) personalChannel.delete();
+            }
           }
           catch(err){
             console.log(err.message)
