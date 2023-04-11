@@ -59,6 +59,10 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
           parent: category,
           permissionOverwrites: [
             {
+              id: client.user.id,
+              allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.ManageChannels],
+            },
+            {
               id: newState.member.id,
               allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak, PermissionFlagsBits.Stream],
             },

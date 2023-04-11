@@ -17,16 +17,6 @@ module.exports = {
                                 type: ChannelType.GuildCategory, 
                                 position: interaction.guild.channels.size, 
                                 reason: "Setup by " + interaction.user.tag,
-                                permissionOverwrites: [
-                                    {
-                                        id: interaction.guild.roles.everyone.id,
-                                        allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak, PermissionFlagsBits.Stream],
-                                    },
-                                    {
-                                        id: client.user.id,
-                                        allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.ManageChannels],
-                                    }
-                                ],
                             }))
                         }
                         )
