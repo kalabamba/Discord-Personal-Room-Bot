@@ -64,7 +64,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             },
             {
               id: newState.member.id,
-              allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak, PermissionFlagsBits.Stream],
+              allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak, PermissionFlagsBits.Stream, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory],
             },
             {
               id: category.guild.roles.everyone,

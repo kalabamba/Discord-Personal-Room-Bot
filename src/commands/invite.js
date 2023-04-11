@@ -7,7 +7,7 @@ module.exports = {
     run: async (client, interaction) => {
       await interaction.deferReply().catch(err => {})
     const embed = new EmbedBuilder()
-    .setDescription("https://discord.com/api/oauth2/authorize?client_id=1094820165671211058&permissions=285214768&scope=bot")
+    .setDescription("https://discord.com/api/oauth2/authorize?client_id=1094820165671211058&permissions=285215760&scope=bot")
     .setColor("Aqua")
     return interaction.followUp({embeds: [embed]})
  }
