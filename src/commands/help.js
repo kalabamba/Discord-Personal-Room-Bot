@@ -10,17 +10,14 @@ module.exports = {
 			interaction.editReply({ content: 'an error occurred.', ephemeral: true });
 		});
 		const embed = new EmbedBuilder()
-			.setTitle('Personal Manager Bot / Help')
+			.setTitle('Personal Room Manager Bot / Help')
 			.setColor('Aqua')
 			.addFields(
-				{ name: '🤖 | Bot', value: '`/help`', inline: true },
-				{ name: 'setup', value: '`/setup`', inline: true },
-				{ name: 'addUser', value: '`/add-user @user`', inline: true },
-				{ name: 'ping', value: '`/ping`', inline: true },
-				{ name: 'uptime', value: '`/uptime`', inline: true },
-				{ name: 'invite', value: '`/invite`', inline: true },
+				{ name: 'For commands and their usage, please visit the website.', value: '[CLICK HERE](www.turgutmemis.com) to visit the website.', inline: false },
+				{ name: 'Support Server', value: 'https://fatihbaskaya.com/dc', inline: true },
 			)
-			.setTimestamp(new Date());
+			.setImage( client.user.avatarURL() )
+			.setFooter({ text: 'Personal Room Manager Bot', iconURL: client.user.avatarURL() })
 		return interaction.editReply({ embeds: [embed] });
 	},
 };
