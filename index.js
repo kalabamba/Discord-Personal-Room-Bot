@@ -94,7 +94,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 						if (personalChannel !== undefined && personalChannel.members.size === 0) await personalChannel.delete();
 					}
 					catch (err) {
-						console.log(err.message);
+						console.log(err);
 					}
 
 				}, 5000);
