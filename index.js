@@ -1,4 +1,5 @@
 require('dotenv').config();
+const config = require('./config.json');
 const express = require('express');
 const app = express();
 const { Client, Collection, GatewayIntentBits, PermissionFlagsBits, ChannelType } = require('discord.js');
@@ -52,10 +53,10 @@ readdirSync('./src/events').forEach(async file => {
 client.on('voiceStateUpdate', async (oldState, newState) => {
 	try {
 		if (oldState.channelId === newState.channelId) return;
-		if (oldState.channelId !== newState.channelId && newState.channelId !== null && client.channels.cache.get(newState.channelId).name === process.env.joinRoomName && client.channels.cache.get(newState.channelId).parentId === client.channels.cache.get(newState.channelId).guild.channels.cache.find(channel => channel.name === process.env.categoryName && channel.type === ChannelType.GuildCategory).id) {
+		if (oldState.channelId !== newState.channelId && newState.channelId !== null && client.channels.cache.get(newState.channelId).name === config.joinRoomName && client.channels.cache.get(newState.channelId).parentId === client.channels.cache.get(newState.channelId).guild.channels.cache.find(channel => channel.name === config.categoryName && channel.type === ChannelType.GuildCategory).id) {
 			const channel = client.channels.cache.get(newState.channelId);
 			if (channel.guild.channels.cache.find(c => c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) === undefined) {
-				const category = channel.guild.channels.cache.find(c => c.name === process.env.categoryName && c.type === ChannelType.GuildCategory);
+				const category = channel.guild.channels.cache.find(c => c.name === config.categoryName && c.type === ChannelType.GuildCategory);
 				const name = newState.member.displayName + '\'s Room';
 				const newChannel = await category.guild.channels.create({
 					name: name,
@@ -85,7 +86,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 		}
 		else if (newState.channelId === null) {
 			const channel = client.channels.cache.get(oldState.channelId);
-			if (channel.name !== process.env.joinRoomName && channel.parentId === channel.guild.channels.cache.find(c => c.name === process.env.categoryName && c.type === ChannelType.GuildCategory).id) {
+			if (channel.name !== config.joinRoomName && channel.parentId === channel.guild.channels.cache.find(c => c.name === config.categoryName && c.type === ChannelType.GuildCategory).id) {
 				setTimeout(() => {
 					try {
 						if (channel.members.size === 0) channel.delete();
