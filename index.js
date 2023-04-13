@@ -92,19 +92,23 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 			}
 		}
 		else if (newState.channelId === null) {
-			const channel = client.channels.cache.get(oldState.channelId);
-			if (channel.name !== config.joinRoomName && channel.parentId === channel.guild.channels.cache.find(c => c.name === config.categoryName && c.type === ChannelType.GuildCategory).id) {
+			rootCategory = oldState.guild.channels.cache.find(channel => channel.name === config.categoryName && channel.type === ChannelType.GuildCategory);	
+			if (oldState.name !== config.joinRoomName && oldState.parentId === rootCategory.id) {
 				setTimeout(async () => {
 					try {
-						if (channel.members.size === 0) {
-							await channel.delete();
-							console.log('- Deleted channel: ' + channel.guild.name+ ' ==> ' + channel.name)
-						};
-						const personalChannel = channel.guild.channels.cache.find(c => c.name === oldState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice);
-						if (personalChannel !== undefined && personalChannel.members.size === 0) {
+						const boss = findBoss(oldState);
+						const personalChannel = oldState.guild.channels.cache.find(ch => ch.name === oldState.member.displayName + '\'s Room' && ch.type === ChannelType.GuildVoice);
+						if (oldState.members.size === 0) {
+							await oldState.delete();
+							console.log('- Deleted channel: ' + oldState.guild.name+ ' ==> ' + oldState.name)
+						}else if (personalChannel && personalChannel.members.size === 0) {
 							await personalChannel.delete();
 							console.log('- Deleted channel: ' + personalChannel.guild.name+ ' ==> ' + personalChannel.name)
-						};
+						}else if (boss) {
+							const bossChannel = oldState.guild.channels.cache.find(ch=> channel.name === boss.value && ch.type === ChannelType.GuildVoice && ch.parentId === rootCategory.id);
+							await bossChannel.delete();
+							console.log('- Deleted channel: ' + bossChannel.guild.name+ ' ==> ' + bossChannel.name)
+						}
 					}
 					catch (err) {
 						console.log(err);
@@ -129,8 +133,8 @@ app.listen(3000, () => {
 });
 
 // Find Boss Function
-function findBoss(newState) {
-	const boss = config.bosses.find(boss => boss.id === newState.member.id);
+function findBoss(state) {
+	const boss = config.bosses.find(boss => boss.id === state.member.id);
 	return boss;
 } 
 
