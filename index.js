@@ -87,13 +87,11 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 		else if (newState.channelId === null) {
 			const channel = client.channels.cache.get(oldState.channelId);
 			if (channel.name !== config.joinRoomName && channel.parentId === channel.guild.channels.cache.find(c => c.name === config.categoryName && c.type === ChannelType.GuildCategory).id) {
-				setTimeout(() => {
+				setTimeout(async () => {
 					try {
-						if (channel.members.size === 0) channel.delete();
-						if (channel.guild.channels.cache.find(c => c.name === oldState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) !== undefined) {
-							const personalChannel = channel.guild.channels.cache.find(c => c.name === oldState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice);
-							if (personalChannel.members.size === 0) personalChannel.delete();
-						}
+						if (channel.members.size === 0) await channel.delete();
+						const personalChannel = channel.guild.channels.cache.find(c => c.name === oldState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice);
+						if (personalChannel !== undefined && personalChannel.members.size === 0) await personalChannel.delete();
 					}
 					catch (err) {
 						console.log(err.message);
