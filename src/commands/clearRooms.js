@@ -17,7 +17,7 @@ module.exports = {
 					await channel.delete();
 				}
 			});
-			const seconds = Math.floor((Date.now() - interaction.createdTimestamp)/ 1000) % 60;
+			const seconds = Math.floor((Date.now() - interaction.createdTimestamp) / 1000) % 60;
 			const miliseconds = Math.floor((Date.now() - interaction.createdTimestamp) % 1000);
 			const embed = new EmbedBuilder()
 				.setTitle('Cleared empty rooms.')
