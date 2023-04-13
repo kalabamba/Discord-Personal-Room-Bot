@@ -78,8 +78,8 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 						},
 					],
 				});
-				newState.setChannel(newChannel);
-				console.log(newState.guild.name+ ' + Created new channel: ' + newChannel.name)
+				await newState.setChannel(newChannel);
+				console.log('+ Created new channel: ' + newState.guild.name+ ' ==> ' + newChannel.name)
 			}
 			else {
 				if(boss) {
@@ -98,12 +98,12 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 					try {
 						if (channel.members.size === 0) {
 							await channel.delete();
-							console.log(channel.guild.name+ ' - Deleted channel: ' + channel.name)
+							console.log('- Deleted channel: ' + channel.guild.name+ ' ==> ' + channel.name)
 						};
 						const personalChannel = channel.guild.channels.cache.find(c => c.name === oldState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice);
 						if (personalChannel !== undefined && personalChannel.members.size === 0) {
 							await personalChannel.delete();
-							console.log(personalChannel.guild.name+ ' - Deleted channel: ' + personalChannel.name)
+							console.log('- Deleted channel: ' + personalChannel.guild.name+ ' ==> ' + personalChannel.name)
 						};
 					}
 					catch (err) {
