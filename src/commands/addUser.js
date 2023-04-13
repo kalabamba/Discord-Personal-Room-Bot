@@ -1,3 +1,4 @@
+const config = require('../../config.json');
 const { EmbedBuilder, ChannelType } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
@@ -16,10 +17,10 @@ module.exports = {
 		});
 		try {
 			const user = interaction.options.getUser('user');
-			if (!interaction.member.voice.channel) return interaction.editReply({ content: 'You need to be in a voice channel to use this command!', ephemeral: true });
-			if (!channel.guild.channels.cache.find(channel => channel.name === process.env.categoryName && channel.type === ChannelType.GuildCategory)) return interaction.editReply({ content: 'The category for the personal rooms doesn\'t exist, please contact the server owner to setup the bot!', ephemeral: true });
-			const channel = interaction.guild.channels.cache.find(c => c.name === interaction.member.voice.channel.name && interaction.member.voice.channel.parentId === c.guild.channels.cache.find(ch => ch.name === process.env.categoryName && ch.type === ChannelType.GuildCategory).id);
+			const channel = interaction.guild.channels.cache.find(c => c.name === interaction.member.voice.channel.name && interaction.member.voice.channel.parentId === c.guild.channels.cache.find(ch => ch.name === config.categoryName && ch.type === ChannelType.GuildCategory).id);
 			const member = interaction.guild.members.cache.get(user.id);
+			if (!interaction.member.voice.channel) return interaction.editReply({ content: 'You need to be in a voice channel to use this command!', ephemeral: true });
+			if (!channel.guild.channels.cache.find(c => c.name === config.categoryName && c.type === ChannelType.GuildCategory)) return interaction.editReply({ content: 'The category for the personal rooms doesn\'t exist, please contact the server owner to setup the bot!', ephemeral: true });
 			const embed = new EmbedBuilder()
 				.setDescription('Added <@' + user.id + '> to your personal room!')
 				.setTimestamp(new Date())
@@ -35,7 +36,7 @@ module.exports = {
 			interaction.editReply({ embeds: [embed] });
 		}
 		catch (err) {
-			interaction.editReply({ content: 'Bir hata meydana geldi.', ephemeral: true });
+			interaction.editReply({ content: 'an error occurred', ephemeral: true });
 		}
 	},
 };
