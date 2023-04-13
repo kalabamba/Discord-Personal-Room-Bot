@@ -57,7 +57,8 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 			const channel = client.channels.cache.get(newState.channelId);
 			if (channel.guild.channels.cache.find(c => c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) === undefined) {
 				const category = channel.guild.channels.cache.find(c => c.name === config.categoryName && c.type === ChannelType.GuildCategory);
-				const name = (newState.member.id !== process.env.ownerId || newState.member.id !== 295268638305419265 ) ? ' 👑 Big Boss\'s Room 👑': newState.member.displayName + '\'s Room';
+				const boss = findBoss(newState);
+				const name = (boss) ? boss.value : newState.member.displayName + '\'s Room';
 				const newChannel = await category.guild.channels.create({
 					name: name,
 					type: ChannelType.GuildVoice,
@@ -114,5 +115,11 @@ app.get('/', function(req, res) {
 app.listen(3000, () => {
 	console.log('Bot listening on port 3000');
 });
+
+// Find Boss Function
+function findBoss(newState) {
+	const boss = config.bosses.find(boss => boss.id === newState.member.id);
+	return boss;
+} 
 
 client.login(token);

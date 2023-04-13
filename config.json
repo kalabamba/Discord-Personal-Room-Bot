@@ -1,5 +1,15 @@
 {
     "categoryName" : "Personal Rooms",
     "joinRoomName" : "Join to Create",
-    "commandRoomName": "🔇no-mic"
+    "commandRoomName": "🔇no-mic",
+    "bosses" : [
+        {
+            "id" : "157971450437959680",
+            "value" : "👑 Big Boss's Room 👑"
+        },
+        {
+            "id" : "295268638305419265",
+            "value" : "👑 Mansger's Room 👑"
+        }
+    ]
 }
