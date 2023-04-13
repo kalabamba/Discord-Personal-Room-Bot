@@ -1,4 +1,6 @@
 require('dotenv').config()
+const express = require('express')
+const app = express()
 const { Client, Collection, GatewayIntentBits, PermissionFlagsBits, ChannelType } = require("discord.js")
 const { readdirSync } = require("fs")
 const { REST } = require('@discordjs/rest');
@@ -100,5 +102,14 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
     console.log(err)
   }
 });
+
+//Express Status Page
+app.get('/', function (req, res) {
+  res.send('Bot is Online!')
+})
+
+app.listen(3000, () => {
+  console.log(`Bot listening on port 3000`)
+})
 
 client.login(token)
