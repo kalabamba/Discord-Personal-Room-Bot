@@ -53,16 +53,16 @@ readdirSync('./src/events').forEach(async file => {
 client.on('voiceStateUpdate', async (oldState, newState) => {
 	try {
 		if (oldState.channelId === newState.channelId) return;
-		if (oldState.channelId !== newState.channelId && newState.channelId !== null && client.channels.cache.get(newState.channelId).name === config.joinRoomName && client.channels.cache.get(newState.channelId).parentId === client.channels.cache.get(newState.channelId).guild.channels.cache.find(channel => channel.name === config.categoryName && channel.type === ChannelType.GuildCategory).id) {
-			const channel = client.channels.cache.get(newState.channelId);
+		const rootCategory = newState.guild.channels.cache.find(channel => channel.name === config.categoryName && channel.type === ChannelType.GuildCategory);
+		if (newState.channelId && newState.channel.name === config.joinRoomName && newState.channel.parentId === rootCategory.id) {
+			const channel = newState.channel;
 			const boss = findBoss(newState);
-			if (channel.guild.channels.cache.find(c => (c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) || c.name === boss.value && c.type === ChannelType.GuildVoice ) === undefined) {
-				const category = channel.guild.channels.cache.find(c => c.name === config.categoryName && c.type === ChannelType.GuildCategory);
+			if (channel.guild.channels.cache.find(c => (c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) || (c.name === boss.value && c.type === ChannelType.GuildVoice) ) === undefined) {
 				const name = (boss) ? boss.value : newState.member.displayName + '\'s Room';
-				const newChannel = await category.guild.channels.create({
+				const newChannel = await newState.guild.channels.create({
 					name: name,
 					type: ChannelType.GuildVoice,
-					parent: category,
+					parent: rootCategory,
 					permissionOverwrites: [
 						{
 							id: client.user.id,
@@ -73,7 +73,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 							allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak, PermissionFlagsBits.Stream, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory],
 						},
 						{
-							id: category.guild.roles.everyone,
+							id: rootCategory.guild.roles.everyone,
 							deny: [PermissionFlagsBits.Connect],
 						},
 					],
