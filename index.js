@@ -57,7 +57,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 		if (newState.channelId && newState.channel.name === config.joinRoomName && newState.channel.parentId === newStateRootCategory.id) {
 			const channel = newState.channel;
 			const boss = findBoss(newState);
-			if (channel.guild.channels.cache.find(c => (c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) || (c.name === boss.value && c.type === ChannelType.GuildVoice) ) === undefined) {
+			if (channel.guild.channels.cache.find(c => (c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) || (c.name === boss.value && c.type === ChannelType.GuildVoice)) === undefined) {
 				const name = (boss) ? boss.value : newState.member.displayName + '\'s Room';
 				const newChannel = await newState.guild.channels.create({
 					name: name,
@@ -79,35 +79,39 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 					],
 				});
 				await newState.setChannel(newChannel);
-				console.log('+ Created new channel: ' + newState.guild.name+ ' ==> ' + newChannel.name)
+				console.log('+ Created new channel: ' + newState.guild.name + ' ==> ' + newChannel.name);
+			}
+			else if (boss) {
+				const oldChannel = channel.guild.channels.cache.find(c => c.name === boss.value && c.type === ChannelType.GuildVoice);
+				newState.setChannel(oldChannel);
 			}
 			else {
-				if(boss) {
-					const oldChannel = channel.guild.channels.cache.find(c => c.name === boss.value && c.type === ChannelType.GuildVoice);
-					newState.setChannel(oldChannel);
-				}else {
-					const oldChannel = channel.guild.channels.cache.find(c => c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice);
-					newState.setChannel(oldChannel)
-				};
+				const oldChannel = channel.guild.channels.cache.find(c => c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice);
+				newState.setChannel(oldChannel);
 			}
 		}
 		else if (newState.channelId === null) {
-			const oldStateRootCategory = oldState.guild.channels.cache.find(channel => channel.name === config.categoryName && channel.type === ChannelType.GuildCategory);	
-			if (oldState.name !== config.joinRoomName && oldState.parentId === oldStateRootCategory.id) {
+			const oldStateRootCategory = oldState.guild.channels.cache.find(ch => ch.name === config.categoryName && ch.type === ChannelType.GuildCategory);
+			if (oldState.channel.name !== config.joinRoomName && oldState.channel.parentId === oldStateRootCategory.id && oldState.channel.members.size === 0) {
 				setTimeout(async () => {
 					try {
-						const boss = findBoss(oldState);
+						if (oldState.channel.members.size === 0) {
+							const chName = oldState.channel.name;
+							await oldState.channel.delete();
+							console.log('- Deleted channel: ' + oldState.guild.name + ' ==> ' + chName);
+						}
 						const personalChannel = oldState.guild.channels.cache.find(ch => ch.name === oldState.member.displayName + '\'s Room' && ch.type === ChannelType.GuildVoice);
-						if (oldState.members.size === 0) {
-							await oldState.delete();
-							console.log('- Deleted channel: ' + oldState.guild.name+ ' ==> ' + oldState.name)
-						}else if (personalChannel && personalChannel.members.size === 0) {
+						if (personalChannel && personalChannel.members.size === 0) {
+							const chName = personalChannel.name;
 							await personalChannel.delete();
-							console.log('- Deleted channel: ' + personalChannel.guild.name+ ' ==> ' + personalChannel.name)
-						}else if (boss) {
-							const bossChannel = oldState.guild.channels.cache.find(ch=> channel.name === boss.value && ch.type === ChannelType.GuildVoice && ch.parentId === oldStateRootCategory.id);
+							console.log('- Deleted channel: ' + personalChannel.guild.name + ' ==> ' + chName);
+						}
+						const boss = findBoss(oldState);
+						const bossChannel = oldState.guild.channels.cache.find(ch => ch.name === boss.value && ch.type === ChannelType.GuildVoice && ch.parentId === oldStateRootCategory.id);
+						if (bossChannel && bossChannel.members.size === 0) {
+							const chName = bossChannel.name;
 							await bossChannel.delete();
-							console.log('- Deleted channel: ' + bossChannel.guild.name+ ' ==> ' + bossChannel.name)
+							console.log('- Deleted channel: ' + bossChannel.guild.name + ' ==> ' + chName);
 						}
 					}
 					catch (err) {
@@ -134,8 +138,8 @@ app.listen(3000, () => {
 
 // Find Boss Function
 function findBoss(state) {
-	const boss = config.bosses.find(boss => boss.id === state.member.id);
-	return boss;
-} 
+	const foundData = config.bosses.find(boss => boss.id === state.member.id);
+	return foundData;
+}
 
 client.login(token);
