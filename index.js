@@ -52,9 +52,9 @@ readdirSync('./src/events').forEach(async file => {
 
 client.on('voiceStateUpdate', async (oldState, newState) => {
 	try {
-		if (oldState.channelId === newState.channelId) return;
 		const newStateRootCategory = newState.guild.channels.cache.find(channel => channel.name === config.categoryName && channel.type === ChannelType.GuildCategory);
-		if (newState.channelId && newState.channel.name === config.joinRoomName && newState.channel.parentId === newStateRootCategory.id) {
+		if (oldState.channelId === newState.channelId) return;
+		else if (newState.channelId && newState.channel.name === config.joinRoomName && newState.channel.parentId === newStateRootCategory.id) {
 			const channel = newState.channel;
 			const boss = findBoss(newState);
 			if (channel.guild.channels.cache.find(c => (c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) || (c.name === boss.value && c.type === ChannelType.GuildVoice)) === undefined) {
