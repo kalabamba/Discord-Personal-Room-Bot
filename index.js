@@ -53,8 +53,8 @@ readdirSync('./src/events').forEach(async file => {
 client.on('voiceStateUpdate', async (oldState, newState) => {
 	try {
 		if (oldState.channelId === newState.channelId) return;
-		const rootCategory = newState.guild.channels.cache.find(channel => channel.name === config.categoryName && channel.type === ChannelType.GuildCategory);
-		if (newState.channelId && newState.channel.name === config.joinRoomName && newState.channel.parentId === rootCategory.id) {
+		const newStateRootCategory = newState.guild.channels.cache.find(channel => channel.name === config.categoryName && channel.type === ChannelType.GuildCategory);
+		if (newState.channelId && newState.channel.name === config.joinRoomName && newState.channel.parentId === newStateRootCategory.id) {
 			const channel = newState.channel;
 			const boss = findBoss(newState);
 			if (channel.guild.channels.cache.find(c => (c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) || (c.name === boss.value && c.type === ChannelType.GuildVoice) ) === undefined) {
@@ -62,7 +62,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 				const newChannel = await newState.guild.channels.create({
 					name: name,
 					type: ChannelType.GuildVoice,
-					parent: rootCategory,
+					parent: newStateRootCategory,
 					permissionOverwrites: [
 						{
 							id: client.user.id,
@@ -73,7 +73,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 							allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.Connect, PermissionFlagsBits.Speak, PermissionFlagsBits.Stream, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory],
 						},
 						{
-							id: rootCategory.guild.roles.everyone,
+							id: newStateRootCategory.guild.roles.everyone,
 							deny: [PermissionFlagsBits.Connect],
 						},
 					],
@@ -92,8 +92,8 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 			}
 		}
 		else if (newState.channelId === null) {
-			rootCategory = oldState.guild.channels.cache.find(channel => channel.name === config.categoryName && channel.type === ChannelType.GuildCategory);	
-			if (oldState.name !== config.joinRoomName && oldState.parentId === rootCategory.id) {
+			const oldStateRootCategory = oldState.guild.channels.cache.find(channel => channel.name === config.categoryName && channel.type === ChannelType.GuildCategory);	
+			if (oldState.name !== config.joinRoomName && oldState.parentId === oldStateRootCategory.id) {
 				setTimeout(async () => {
 					try {
 						const boss = findBoss(oldState);
@@ -105,7 +105,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 							await personalChannel.delete();
 							console.log('- Deleted channel: ' + personalChannel.guild.name+ ' ==> ' + personalChannel.name)
 						}else if (boss) {
-							const bossChannel = oldState.guild.channels.cache.find(ch=> channel.name === boss.value && ch.type === ChannelType.GuildVoice && ch.parentId === rootCategory.id);
+							const bossChannel = oldState.guild.channels.cache.find(ch=> channel.name === boss.value && ch.type === ChannelType.GuildVoice && ch.parentId === oldStateRootCategory.id);
 							await bossChannel.delete();
 							console.log('- Deleted channel: ' + bossChannel.guild.name+ ' ==> ' + bossChannel.name)
 						}
