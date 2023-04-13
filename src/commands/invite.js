@@ -5,8 +5,8 @@ module.exports = {
 		.setName('invite')
 		.setDescription('🤖 | Looking for my invite link? Here it is!'),
 	run: async (client, interaction) => {
-		await interaction.deferReply().catch(()=> {
-			interaction.editReply({ content: 'an error acquired.', ephemeral: true });
+		await interaction.deferReply().catch(() => {
+			interaction.editReply({ content: 'an error occurred.', ephemeral: true });
 		});
 		if (process.env.oauthv2link === undefined) {
 			interaction.editReply(`Missing invite link! Please contact with <@${process.env.ownerId}>`);

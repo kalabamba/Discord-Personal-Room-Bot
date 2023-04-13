@@ -6,7 +6,7 @@ module.exports = {
 		.setDescription('🤖 | See uptime the bot.'),
 	run: async (client, interaction) => {
 		await interaction.deferReply().catch(() => {
-			interaction.editReply({ content: 'an error acquired.', ephemeral: true });
+			interaction.editReply({ content: 'an error occurred.', ephemeral: true });
 		});
 		const days = Math.floor(client.uptime / 86400000);
 		const hours = Math.floor(client.uptime / 3600000) % 24;

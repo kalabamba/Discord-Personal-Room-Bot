@@ -6,7 +6,7 @@ module.exports = {
 		.setDescription('🤖 | Returns latency and API ping.'),
 	run: async (client, interaction) => {
 		await interaction.deferReply().catch(() => {
-			interaction.editReply({ content: 'an error acquired.', ephemeral: true });
+			interaction.editReply({ content: 'an error occurred.', ephemeral: true });
 		});
 		const embed = new EmbedBuilder()
 			.setTitle('PONG! :ping_pong:')

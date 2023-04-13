@@ -10,7 +10,7 @@ module.exports = {
 
 	run: async (client, interaction) => {
 		await interaction.deferReply({ ephemeral: true }).catch(() => {
-			interaction.editReply({ content: 'an error acquired.', ephemeral: true });
+			interaction.editReply({ content: 'an error occurred.', ephemeral: true });
 		});
 		if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator) || !interaction.user.id === process.env.ownerId) {return interaction.followUp({ content: 'You need to have the `ADMINISTRATOR` permission to use this command!' });}
 		else {
