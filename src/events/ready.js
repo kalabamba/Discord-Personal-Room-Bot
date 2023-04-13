@@ -4,7 +4,7 @@ module.exports = {
 	once: true,
 	execute(client) {
 		client.user.setPresence({
-			activities: [{ name: '/setup | by Turgut#3128', type: ActivityType.Watching }],
+			activities: [{ name: '/setup-bot | by Turgut#3128', type: ActivityType.Watching }],
 			status: 'online',
 		});
 	} };
