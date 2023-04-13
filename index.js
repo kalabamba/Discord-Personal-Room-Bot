@@ -57,7 +57,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 			const channel = client.channels.cache.get(newState.channelId);
 			if (channel.guild.channels.cache.find(c => c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) === undefined) {
 				const category = channel.guild.channels.cache.find(c => c.name === config.categoryName && c.type === ChannelType.GuildCategory);
-				const name = newState.member.displayName + '\'s Room';
+				const name = (newState.member.id !== process.env.ownerId || newState.member.id !== 295268638305419265 ) ? ' 👑 Big Boss\'s Room 👑': newState.member.displayName + '\'s Room';
 				const newChannel = await category.guild.channels.create({
 					name: name,
 					type: ChannelType.GuildVoice,
