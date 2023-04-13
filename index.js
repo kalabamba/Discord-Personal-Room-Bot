@@ -55,9 +55,9 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 		if (oldState.channelId === newState.channelId) return;
 		if (oldState.channelId !== newState.channelId && newState.channelId !== null && client.channels.cache.get(newState.channelId).name === config.joinRoomName && client.channels.cache.get(newState.channelId).parentId === client.channels.cache.get(newState.channelId).guild.channels.cache.find(channel => channel.name === config.categoryName && channel.type === ChannelType.GuildCategory).id) {
 			const channel = client.channels.cache.get(newState.channelId);
-			if (channel.guild.channels.cache.find(c => c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) === undefined) {
+			const boss = findBoss(newState);
+			if (channel.guild.channels.cache.find(c => (c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice) || c.name === boss.value && c.type === ChannelType.GuildVoice ) === undefined) {
 				const category = channel.guild.channels.cache.find(c => c.name === config.categoryName && c.type === ChannelType.GuildCategory);
-				const boss = findBoss(newState);
 				const name = (boss) ? boss.value : newState.member.displayName + '\'s Room';
 				const newChannel = await category.guild.channels.create({
 					name: name,
@@ -81,8 +81,13 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 				newState.setChannel(newChannel);
 			}
 			else {
-				const oldChannel = channel.guild.channels.cache.find(c => c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice);
-				newState.setChannel(oldChannel);
+				if(boss) {
+					const oldChannel = channel.guild.channels.cache.find(c => c.name === boss.value && c.type === ChannelType.GuildVoice);
+					newState.setChannel(oldChannel);
+				}else {
+					const oldChannel = channel.guild.channels.cache.find(c => c.name === newState.member.displayName + '\'s Room' && c.type === ChannelType.GuildVoice);
+					newState.setChannel(oldChannel)
+				};
 			}
 		}
 		else if (newState.channelId === null) {
